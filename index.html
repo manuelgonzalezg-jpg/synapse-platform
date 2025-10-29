@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNAPSE - Gestión Inteligente del Conocimiento</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #5B21B6;
+      --primary-dark: #4C1D95;
+      --secondary: #7C3AED;
+      --accent: #EC4899;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --dark: #1F2937;
+      --light: #F9FAFB;
+      --gray: #6B7280;
+      --border: #E5E7EB;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* NAVEGACIÓN AVANZADA */
+    .navbar {
+      background: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--gray);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1rem;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-bar {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.5rem 2.5rem 0.5rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.875rem;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+    }
+
+    .notification-btn {
+      position: relative;
+      background: var(--light);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .notification-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--danger);
+      color: white;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 1rem;
+      background: var(--light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .user-profile:hover {
+      background: var(--border);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .user-role {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
+    /* LAYOUT PRINCIPAL */
+    .main-layout {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 250px 1fr 320px;
+      gap: 2rem;
+    }
+
+    /* SIDEBAR IZQUIERDO */
+    .sidebar {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-item {
+      margin-bottom: 0.25rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      color: var(--dark);
+      text-decoration: none;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .sidebar-link:hover, .sidebar-link.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .sidebar-icon {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    .main-content {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+
+    .header-info h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .header-info p {
+      color: var(--gray);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background: var(--light);
+      color: var(--dark);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    /* DASHBOARD DE MÉTRICAS */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient);
+    }
+
+    .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .metric-icon.blue { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+    .metric-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .metric-icon.purple { background: rgba(124, 58, 237, 0.1); color: var(--secondary); }
+    .metric-icon.orange { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+    .metric-trend {
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .metric-trend.up {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .metric-trend.down {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-label {
+      color: var(--gray);
+      font-size: 0.875rem;
+    }
+
+    .metric-change {
+      font-size: 0.75rem;
+      color: var(--gray);
+      margin-top: 0.5rem;
+    }
+
+    /* SECCIÓN DE CONOCIMIENTO */
+    .knowledge-section {
+      margin-bottom: 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .view-toggle {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .toggle-btn {
+      padding: 0.5rem;
+      background: var(--light);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .toggle-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .knowledge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .knowledge-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .knowledge-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-type {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: var(--primary);
+      color: white;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-type.article { background: #3B82F6; }
+    .card-type.video { background: #EF4444; }
+    .card-type.course { background: #10B981; }
+    .card-type.podcast { background: #F59E0B; }
+
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: var(--gray);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .card-description {
+      color: var(--gray);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .author-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .author-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .card-stats {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.875rem;
+      color: var(--gray);
+    }
+
+    /* LIDERAZGO Y COLABORACIÓN */
+    .leadership-section {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .team-activity {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--light);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .activity-item:hover {
+      background: var(--border);
+    }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.create { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+    .activity-icon.collaborate { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .activity-icon.achieve { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .activity-description {
+      font-size: 0.875rem;
+      color: var(--gray);
+    }
+
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--gray);
+      margin-top: 0.25rem;
+    }
+
+    .leadership-board {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .leader-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: var(--light);
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .leader-item:hover {
+      background: var(--border);
+    }
+
+    .leader-rank {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .leader-rank.gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
+    .leader-rank.silver { background: linear-gradient(135deg, #C0C0C0, #808080); color: white; }
+    .leader-rank.bronze { background: linear-gradient(135deg, #CD7F32, #8B4513); color: white; }
+    .leader-rank.other { background: var(--border); color: var(--gray); }
+
+    .leader-info {
+      flex: 1;
+    }
+
+    .leader-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .leader-role {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
+    .leader-score {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* SIDEBAR DERECHO */
+    .right-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .ai-assistant {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .ai-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .ai-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .ai-suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .suggestion-item {
+      padding: 1rem;
+      background: var(--light);
+      border-radius: 10px;
+      border-left: 3px solid var(--primary);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .suggestion-item:hover {
+      background: var(--border);
+      transform: translateX(5px);
+    }
+
+    .suggestion-title {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .suggestion-description {
+      font-size: 0.875rem;
+      color: var(--gray);
+    }
+
+    .quick-actions {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .action-item {
+      padding: 1rem;
+      background: var(--light);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .action-item:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .action-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* MODALES */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(91, 33, 182, 0.1);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 2rem 2rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* TAGS */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .tag {
+      padding: 0.25rem 0.75rem;
+      background: var(--light);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gray);
+    }
+
+    .tag.primary {
+      background: rgba(91, 33, 182, 0.1);
+      color: var(--primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar, .right-sidebar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+
+      .search-bar {
+        display: none;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .leadership-section {
+        grid-template-columns: 1fr;
+      }
+
+      .knowledge-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LOADING STATE */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* CHARTS */
+    .chart-container {
+      height: 200px;
+      position: relative;
+      margin-top: 1rem;
+    }
+
+    .chart-bar {
+      position: absolute;
+      bottom: 0;
+      width: 30px;
+      background: var(--gradient);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.3s ease;
+    }
+
+    /* NOTIFICATIONS */
+    .notification-toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--dark);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      z-index: 3000;
+      animation: slideInRight 0.3s ease;
+    }
+
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVEGACIÓN -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-icon">
+          <i class="fas fa-brain"></i>
+        </div>
+        SYNAPSE
+      </div>
+      
+      <ul class="nav-menu">
+        <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+        <li><a href="#" class="nav-link" data-page="knowledge">Conocimiento</a></li>
+        <li><a href="#" class="nav-link" data-page="collaboration">Colaboración</a></li>
+        <li><a href="#" class="nav-link" data-page="leadership">Liderazgo</a></li>
+        <li><a href="#" class="nav-link" data-page="analytics">Analytics</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="search-bar">
+          <input type="text" class="search-input" placeholder="Buscar conocimiento...">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <button class="notification-btn">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </button>
+        
+        <div class="user-profile">
+          <div class="user-avatar">JD</div>
+          <div class="user-info">
+            <div class="user-name">Juan Díaz</div>
+            <div class="user-role">Líder de Innovación</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="main-layout">
+    <!-- SIDEBAR IZQUIERDO -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Navegación</h3>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link active" data-section="overview">
+              <i class="fas fa-th-large sidebar-icon"></i>
+              Vista General
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="learning">
+              <i class="fas fa-graduation-cap sidebar-icon"></i>
+              Mi Aprendizaje
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="teams">
+              <i class="fas fa-users sidebar-icon"></i>
+              Equipos
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="projects">
+              <i class="fas fa-project-diagram sidebar-icon"></i>
+              Proyectos
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" data-section="resources">
+              <i class="fas fa-folder sidebar-icon"></i>
+              Recursos
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3 class="sidebar-title">Herramientas</h3>
+        <ul class="sidebar-menu">
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" onclick="showModal('create')">
+              <i class="fas fa-plus sidebar-icon"></i>
+              Crear Contenido
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" onclick="showModal('share')">
+              <i class="fas fa-share sidebar-icon"></i>
+              Compartir
+            </a>
+          </li>
+          <li class="sidebar-item">
+            <a href="#" class="sidebar-link" onclick="showModal('mentorship')">
+              <i class="fas fa-hands-helping sidebar-icon"></i>
+              Mentoría
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      <div class="content-header">
+        <div class="header-info">
+          <h1>Bienvenido, Juan</h1>
+          <p>Gestiona tu conocimiento y liderazgo en un solo lugar</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" onclick="showModal('create')">
+            <i class="fas fa-plus"></i>
+            Crear Contenido
+          </button>
+          <button class="btn btn-primary" onclick="showModal('learning-path')">
+            <i class="fas fa-route"></i>
+            Nuevo Path
+          </button>
+        </div>
+      </div>
+
+      <!-- MÉTRICAS PRINCIPALES -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon blue">
+              <i class="fas fa-book-open"></i>
+            </div>
+            <div class="metric-trend up">
+              <i class="fas fa-arrow-up"></i> 12%
+            </div>
+          </div>
+          <div class="metric-value">24</div>
+          <div class="metric-label">Cursos Completados</div>
+          <div class="metric-change">+3 este mes</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon green">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="metric-trend up">
+              <i class="fas fa-arrow-up"></i> 8%
+            </div>
+          </div>
+          <div class="metric-value">156</div>
+          <div class="metric-label">Conexiones Activas</div>
+          <div class="metric-change">+12 esta semana</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon purple">
+              <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="metric-trend up">
+              <i class="fas fa-arrow-up"></i> 23%
+            </div>
+          </div>
+          <div class="metric-value">89</div>
+          <div class="metric-label">Ideas Compartidas</div>
+          <div class="metric-change">+17 este mes</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon orange">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <div class="metric-trend up">
+              <i class="fas fa-arrow-up"></i> 5%
+            </div>
+          </div>
+          <div class="metric-value">1,250</div>
+          <div class="metric-label">Puntos de Liderazgo</div>
+          <div class="metric-change">Nivel 5</div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE CONOCIMIENTO -->
+      <div class="knowledge-section">
+        <div class="section-header">
+          <h2 class="section-title">Conocimiento Reciente</h2>
+          <div class="view-toggle">
+            <button class="toggle-btn active"><i class="fas fa-th"></i></button>
+            <button class="toggle-btn"><i class="fas fa-list"></i></button>
+          </div>
+        </div>
+
+        <div class="knowledge-grid">
+          <div class="knowledge-card" onclick="openKnowledge('ai-strategy')">
+            <div class="card-header">
+              <span class="card-type article">Artículo</span>
+              <h3 class="card-title">Estrategias de IA para la Transformación Digital</h3>
+              <div class="card-meta">
+                <span><i class="fas fa-clock"></i> 15 min</span>
+                <span><i class="fas fa-signal"></i> Intermedio</span>
+                <span><i class="fas fa-star"></i> 4.8</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-description">Explora cómo implementar inteligencia artificial en procesos organizacionales para maximizar el impacto y eficiencia.</p>
+              <div class="tags-container">
+                <span class="tag primary">IA</span>
+                <span class="tag">Transformación</span>
+                <span class="tag">Estrategia</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-author">
+                <div class="author-avatar">MC</div>
+                <span class="author-name">María Castillo</span>
+              </div>
+              <div class="card-stats">
+                <span><i class="fas fa-eye"></i> 234</span>
+                <span><i class="fas fa-heart"></i> 45</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="knowledge-card" onclick="openKnowledge('leadership-agile')">
+            <div class="card-header">
+              <span class="card-type video">Video</span>
+              <h3 class="card-title">Liderazgo Ágil en Entornos Remotos</h3>
+              <div class="card-meta">
+                <span><i class="fas fa-clock"></i> 32 min</span>
+                <span><i class="fas fa-signal"></i> Avanzado</span>
+                <span><i class="fas fa-star"></i> 4.9</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-description">Aprende las mejores prácticas para liderar equipos distribuidos manteniendo la productividad y el engagement.</p>
+              <div class="tags-container">
+                <span class="tag primary">Liderazgo</span>
+                <span class="tag">Agile</span>
+                <span class="tag">Remote</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-author">
+                <div class="author-avatar">AR</div>
+                <span class="author-name">Antonio Ruiz</span>
+              </div>
+              <div class="card-stats">
+                <span><i class="fas fa-eye"></i> 567</span>
+                <span><i class="fas fa-heart"></i> 89</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="knowledge-card" onclick="openKnowledge('data-analytics')">
+            <div class="card-header">
+              <span class="card-type course">Curso</span>
+              <h3 class="card-title">Analytics para Toma de Decisiones</h3>
+              <div class="card-meta">
+                <span><i class="fas fa-clock"></i> 2h 30min</span>
+                <span><i class="fas fa-signal"></i> Intermedio</span>
+                <span><i class="fas fa-star"></i> 4.7</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="card-description">Curso completo sobre cómo utilizar datos para impulsar decisiones estratégicas en tu organización.</p>
+              <div class="tags-container">
+                <span class="tag primary">Datos</span>
+                <span class="tag">Analytics</span>
+                <span class="tag">Decisions</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-author">
+                <div class="author-avatar">LM</div>
+                <span class="author-name">Laura Morales</span>
+              </div>
+              <div class="card-stats">
+                <span><i class="fas fa-eye"></i> 892</span>
+                <span><i class="fas fa-heart"></i> 156</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIDERAZGO Y COLABORACIÓN -->
+      <div class="leadership-section">
+        <div class="team-activity">
+          <div class="section-header">
+            <h2 class="section-title">Actividad del Equipo</h2>
+            <button class="btn btn-secondary">Ver Todo</button>
+          </div>
+          
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-icon create">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">María Castillo publicó "Guía de Innovación"</div>
+                <div class="activity-description">Nueva guía sobre metodologías de innovación disruptiva</div>
+                <div class="activity-time">Hace 2 horas</div>
+              </div>
+            </div>
+
+            <div class="activity-item">
+              <div class="activity-icon collaborate">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">Nuevo equipo de "Transformación Digital"</div>
+                <div class="activity-description">Se ha formado un equipo interdepartamental para liderar la iniciativa</div>
+                <div class="activity-time">Hace 4 horas</div>
+              </div>
+            </div>
+
+            <div class="activity-item">
+              <div class="activity-icon achieve">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="activity-content">
+                <div class="activity-title">¡Tú completaste "Liderazgo Ágil"!</div>
+                <div class="activity-description">Has obtenido el certificado y 150 puntos de liderazgo</div>
+                <div class="activity-time">Ayer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="leadership-board">
+          <div class="section-header">
+            <h2 class="section-title">Líderes del Mes</h2>
+            <button class="btn btn-secondary">Ranking</button>
+          </div>
+          
+          <div class="leaderboard-list">
+            <div class="leader-item">
+              <div class="leader-rank gold">1</div>
+              <div class="leader-avatar">MC</div>
+              <div class="leader-info">
+                <div class="leader-name">María Castillo</div>
+                <div class="leader-role">Directora de Innovación</div>
+              </div>
+              <div class="leader-score">2,450 pts</div>
+            </div>
+
+            <div class="leader-item">
+              <div class="leader-rank silver">2</div>
+              <div class="leader-avatar">AR</div>
+              <div class="leader-info">
+                <div class="leader-name">Antonio Ruiz</div>
+                <div class="leader-role">Tech Lead</div>
+              </div>
+              <div class="leader-score">2,320 pts</div>
+            </div>
+
+            <div class="leader-item">
+              <div class="leader-rank bronze">3</div>
+              <div class="leader-avatar">LM</div>
+              <div class="leader-info">
+                <div class="leader-name">Laura Morales</div>
+                <div class="leader-role">Product Manager</div>
+              </div>
+              <div class="leader-score">2,180 pts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- SIDEBAR DERECHO -->
+    <aside class="right-sidebar">
+      <!-- ASISTENTE IA -->
+      <div class="ai-assistant">
+        <div class="ai-header">
+          <div class="ai-avatar">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="ai-status">
+            <span style="font-weight: 600;">Asistente IA</span>
+            <div class="status-dot"></div>
+            <span style="font-size: 0.875rem; color: var(--gray);">Activo</span>
+          </div>
+        </div>
+
+        <div class="ai-suggestions">
+          <div class="suggestion-item" onclick="applySuggestion('learning-path')">
+            <div class="suggestion-title">Path de Aprendizaje Recomendado</div>
+            <div class="suggestion-description">Basado en tu perfil, te sugerimos "Liderazgo Digital Avanzado"</div>
+          </div>
+
+          <div class="suggestion-item" onclick="applySuggestion('collaboration')">
+            <div class="suggestion-title">Colaboración Potencial</div>
+            <div class="suggestion-description">3 miembros comparten tus intereses en IA</div>
+          </div>
+
+          <div class="suggestion-item" onclick="applySuggestion('content')">
+            <div class="suggestion-title">Contenido Trending</div>
+            <div class="suggestion-description">"Machine Learning para Líderes" está ganando popularidad</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIONES RÁPIDAS -->
+      <div class="quick-actions">
+        <div class="section-header">
+          <h2 class="section-title">Acciones Rápidas</h2>
+        </div>
+        
+        <div class="actions-grid">
+          <div class="action-item" onclick="quickAction('create-post')">
+            <div class="action-icon"><i class="fas fa-edit"></i></div>
+            <div class="action-label">Nuevo Post</div>
+          </div>
+          <div class="action-item" onclick="quickAction('create-team')">
+            <div class="action-icon"><i class="fas fa-users"></i></div>
+            <div class="action-label">Crear Equipo</div>
+          </div>
+          <div class="action-item" onclick="quickAction('schedule-event')">
+            <div class="action-icon"><i class="fas fa-calendar"></i></div>
+            <div class="action-label">Evento</div>
+          </div>
+          <div class="action-item" onclick="quickAction('find-mentor')">
+            <div class="action-icon"><i class="fas fa-hands-helping"></i></div>
+            <div class="action-label">Mentor</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- MODAL CREAR CONTENIDO -->
+  <div class="modal" id="createModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Crear Nuevo Contenido</h2>
+      </div>
+      <div class="modal-body">
+        <form id="createForm">
+          <div class="form-group">
+            <label class="form-label">Tipo de Contenido</label>
+            <select class="form-select" id="contentType">
+              <option value="article">Artículo</option>
+              <option value="video">Video</option>
+              <option value="course">Curso</option>
+              <option value="podcast">Podcast</option>
+              <option value="presentation">Presentación</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Título</label>
+            <input type="text" class="form-input" id="contentTitle" placeholder="Ingresa un título claro y descriptivo">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Categoría</label>
+              <select class="form-select" id="contentCategory">
+                <option value="">Selecciona una categoría</option>
+                <option value="leadership">Liderazgo</option>
+                <option value="technology">Tecnología</option>
+                <option value="innovation">Innovación</option>
+                <option value="strategy">Estrategia</option>
+                <option value="culture">Cultura</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Nivel</label>
+              <select class="form-select" id="contentLevel">
+                <option value="basic">Básico</option>
+                <option value="intermediate">Intermedio</option>
+                <option value="advanced">Avanzado</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-textarea" id="contentDescription" placeholder="Describe brevemente de qué trata tu contenido..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Etiquetas</label>
+            <input type="text" class="form-input" id="contentTags" placeholder="Separa las etiquetas con comas">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('create')">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveContent()">Publicar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LEARNING PATH -->
+  <div class="modal" id="learningPathModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Crear Path de Aprendizaje</h2>
+      </div>
+      <div class="modal-body">
+        <form id="pathForm">
+          <div class="form-group">
+            <label class="form-label">Nombre del Path</label>
+            <input type="text" class="form-input" id="pathName" placeholder="Ej: Liderazgo Digital Avanzado">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-textarea" id="pathDescription" placeholder="Describe el objetivo y contenido de este path..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Duración Estimada</label>
+            <div class="form-row">
+              <input type="number" class="form-input" id="pathWeeks" placeholder="Semanas" min="1" max="52">
+              <input type="number" class="form-input" id="pathHours" placeholder="Horas totales" min="1" max="200">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Competencias a Desarrollar</label>
+            <textarea class="form-textarea" id="pathSkills" placeholder="Lista las competencias clave..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('learning-path')">Cancelar</button>
+        <button class="btn btn-primary" onclick="savePath()">Crear Path</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ESTADO DE LA APLICACIÓN
+    const SYNAPSE = {
+      user: {
+        id: 1,
+        name: 'Juan Díaz',
+        role: 'Líder de Innovación',
+        avatar: 'JD',
+        level: 5,
+        points: 1250
+      },
+      
+      content: [],
+      teams: [],
+      notifications: [],
+      
+      init: function() {
+        console.log('🧠 SYNAPSE iniciado');
+        this.setupEventListeners();
+        this.loadInitialData();
+        this.startRealTimeUpdates();
+      },
+      
+      setupEventListeners: function() {
+        // Navegación principal
+        document.querySelectorAll('.nav-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = e.target.dataset.page;
+            this.navigateToPage(page);
+            
+            // Actualizar active state
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            e.target.classList.add('active');
+          });
+        });
+
+        // Sidebar
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const section = e.target.dataset.section;
+            this.showSection(section);
+            
+            // Actualizar active state
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            e.target.classList.add('active');
+          });
+        });
+
+        // Cerrar modals
+        document.querySelectorAll('.modal').forEach(modal => {
+          modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+              modal.classList.remove('show');
+            }
+          });
+        });
+      },
+      
+      loadInitialData: function() {
+        // Simular carga inicial de datos
+        setTimeout(() => {
+          this.showNotification('Bienvenido a SYNAPSE', 'success');
+        }, 1000);
+      },
+      
+      startRealTimeUpdates: function() {
+        // Simular actualizaciones en tiempo real
+        setInterval(() => {
+          this.updateMetrics();
+        }, 30000); // Cada 30 segundos
+      },
+      
+      navigateToPage: function(page) {
+        console.log('Navegando a:', page);
+        // Aquí cargaríamos el contenido específico de cada página
+      },
+      
+      showSection: function(section) {
+        console.log('Mostrando sección:', section);
+        // Aquí mostraríamos el contenido específico de cada sección
+      },
+      
+      updateMetrics: function() {
+        // Simular actualización de métricas
+        const metrics = document.querySelectorAll('.metric-value');
+        metrics.forEach(metric => {
+          const currentValue = parseInt(metric.textContent);
+          const change = Math.floor(Math.random() * 5) - 2;
+          const newValue = Math.max(0, currentValue + change);
+          metric.textContent = newValue;
+        });
+      },
+      
+      showNotification: function(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = 'notification-toast';
+        notification.textContent = message;
+        
+        if (type === 'success') {
+          notification.style.background = 'var(--success)';
+        } else if (type === 'warning') {
+          notification.style.background = 'var(--warning)';
+        }
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+    };
+
+    // FUNCIONES GLOBALES
+    function showModal(type) {
+      const modalId = type + 'Modal';
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('show');
+      }
+    }
+
+    function closeModal(type) {
+      const modalId = type + 'Modal';
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.remove('show');
+      }
+    }
+
+    function saveContent() {
+      const formData = {
+        type: document.getElementById('contentType').value,
+        title: document.getElementById('contentTitle').value,
+        category: document.getElementById('contentCategory').value,
+        level: document.getElementById('contentLevel').value,
+        description: document.getElementById('contentDescription').value,
+        tags: document.getElementById('contentTags').value
+      };
+      
+      console.log('Guardando contenido:', formData);
+      SYNAPSE.showNotification('Contenido publicado exitosamente', 'success');
+      closeModal('create');
+    }
+
+    function savePath() {
+      const formData = {
+        name: document.getElementById('pathName').value,
+        description: document.getElementById('pathDescription').value,
+        weeks: document.getElementById('pathWeeks').value,
+        hours: document.getElementById('pathHours').value,
+        skills: document.getElementById('pathSkills').value
+      };
+      
+      console.log('Guardando path:', formData);
+      SYNAPSE.showNotification('Path de aprendizaje creado', 'success');
+      closeModal('learning-path');
+    }
+
+    function openKnowledge(id) {
+      console.log('Abriendo conocimiento:', id);
+      SYNAPSE.showNotification('Cargando contenido...', 'info');
+    }
+
+    function applySuggestion(type) {
+      console.log('Aplicando sugerencia:', type);
+      SYNAPSE.showNotification('Sugerencia aplicada', 'success');
+    }
+
+    function quickAction(action) {
+      console.log('Ejecutando acción rápida:', action);
+      
+      switch(action) {
+        case 'create-post':
+          showModal('create');
+          break;
+        case 'create-team':
+          SYNAPSE.showNotification('Abriendo formulario de equipo...', 'info');
+          break;
+        case 'schedule-event':
+          SYNAPSE.showNotification('Abriendo calendario...', 'info');
+          break;
+        case 'find-mentor':
+          SYNAPSE.showNotification('Buscando mentores disponibles...', 'info');
+          break;
+      }
+    }
+
+    // INICIALIZACIÓN
+    document.addEventListener('DOMContentLoaded', function() {
+      SYNAPSE.init();
+      
+      // Debug
+      window.SYNAPSE = SYNAPSE;
+      
+      console.log('%c🧠 SYNAPSE - Gestión Inteligente del Conocimiento', 'font-size: 20px; color: #5B21B6; font-weight: bold;');
+      console.log('%cPlataforma de Liderazgo Digital y Colaboración', 'color: #7C3AED;');
+    });
+  </script>
+</body>
+</html>
